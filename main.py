@@ -1,4 +1,4 @@
-from facial_recognition.app import start_app
+from facial_recognition.database import db
 
 if __name__ == "__main__":
-    start_app()
+    print(db.insert({"name": "John", "age": 30}))
