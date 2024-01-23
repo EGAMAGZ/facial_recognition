@@ -877,6 +877,20 @@ files = [
 ]
 
 [[package]]
+name = "tinydb-serialization"
+version = "2.1.1"
+description = "Serialization for objects that TinyDB otherwise couldn't handle"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "tinydb_serialization-2.1.1-py3-none-any.whl", hash = "sha256:95e04564590798a0fdca63fe57f9a4013183448b4aadcba151b6234d1c9b6f28"},
+    {file = "tinydb_serialization-2.1.1.tar.gz", hash = "sha256:3f7a23bd60ef88d4d0ae930c1902bd72d5a970c87c721099b2d726731c8616c1"},
+]
+
+[package.dependencies]
+tinydb = ">=4.0,<5.0"
+
+[[package]]
 name = "types-python-dateutil"
 version = "2.8.19.20240106"
 description = "Typing stubs for python-dateutil"
@@ -1051,4 +1065,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "563c5ef92f41edf2647e0038eb4a915547bd3a7107fbf14ecd86211e21ab6657"
+content-hash = "a2c4f9a826ebd58276560441a8a5af8192f58cf62fde92d2a303c5e4a432b873"

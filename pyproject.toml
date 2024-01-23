@@ -10,6 +10,7 @@ python = "^3.12"
 flet = "^0.19.0"
 tinydb = "^4.8.0"
 pydantic = "^2.5.3"
+tinydb-serialization = "^2.1.1"
 
 
 [build-system]
