@@ -1,10 +1,7 @@
-import uuid
-from datetime import datetime
-
-from facial_recognition.database import db
-from facial_recognition.model.face_data import FaceData
+from facial_recognition.ui.app import start_app
 
 if __name__ == "__main__":
-    face = FaceData(name="John", data_path=uuid.uuid4(), created_at=datetime.now())
-    print(face.model_dump())
-    print(db.insert(face.model_dump()))
+    # name = input("Enter your name: ")
+    # face = FaceData(name=name, data_path=uuid.uuid4(), created_at=datetime.now())
+    # print(db.insert(face.model_dump()))
+    start_app()

@@ -1,5 +1,4 @@
 from tinydb import TinyDB, JSONStorage
-from tinydb.middlewares import CachingMiddleware
 from tinydb_serialization import SerializationMiddleware
 from tinydb_serialization.serializers import DateTimeSerializer
 
