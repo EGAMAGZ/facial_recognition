@@ -19,6 +19,7 @@ class FaceDatabase:
     _face_data: FaceData
     _video_capture: cv2.VideoCapture
 
+    _is_capturing = True
     on_capture_complete: OnCaptureComplete
     on_image_captured: OnImageCaptured
 
@@ -36,8 +37,27 @@ class FaceDatabase:
 
     def _on_stop_capture(self) -> None:
         self._video_capture.release()
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
         self.on_capture_complete()
+
+    def _add_face_indicators(self, face_count, faces, frame, resized_frame):
+        for (x, y, w, h) in faces:
+            cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            face = frame[y:y + h, x:x + w]
+            face = cv2.resize(face, (150, 150), interpolation=cv2.INTER_CUBIC)
+            self._store_face_image(face, face_count)
+
+            # cv2.imshow('frame', resized_frame)
+            self.on_image_captured(face_count, frame_to_image(resized_frame))
+            # key = cv2.waitKey(delay=1)
+            # if key == 27:  # ESC key
+            if not self._is_capturing:
+                self._on_stop_capture()
+                break
+
+    def _store_face_image(self, face, face_count):
+        image_path = str(self._face_path / f'face-{face_count}.jpg')
+        cv2.imwrite(image_path, face)
 
     def capture_face(self) -> None:
         self._create_directory()
@@ -54,27 +74,12 @@ class FaceDatabase:
 
             faces = face_classifier.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
 
-            self._show_face_indicator(face_count, faces, frame, resized_frame)
+            self._add_face_indicators(face_count, faces, frame, resized_frame)
         else:
             self._on_stop_capture()
 
-    def _show_face_indicator(self, face_count, faces, frame, resized_frame):
-        for (x, y, w, h) in faces:
-            cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            face = frame[y:y + h, x:x + w]
-            face = cv2.resize(face, (150, 150), interpolation=cv2.INTER_CUBIC)
-            self._store_face_image(face, face_count)
-
-            # cv2.imshow('frame', resized_frame)
-            self.on_image_captured(face_count, frame_to_image(resized_frame))
-            key = cv2.waitKey(1)
-            if key == 27:  # ESC key
-                self._on_stop_capture()
-                break
-
-    def _store_face_image(self, face, face_count):
-        image_path = str(self._face_path / f'face-{face_count}.jpg')
-        cv2.imwrite(image_path, face)
+    def stop_capture(self) -> None:
+        self._is_capturing = False
 
 
 if __name__ == "__main__":
@@ -95,6 +100,7 @@ if __name__ == "__main__":
         page.add(
             ft.Column(
                 controls=[
+                    ft.TextButton("Stop", on_click=lambda e: face_database.stop_capture()),
                     text,
                     image_webcam
                 ]
