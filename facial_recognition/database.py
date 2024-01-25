@@ -1,4 +1,7 @@
+import enum
+
 from tinydb import TinyDB, JSONStorage
+from tinydb.table import Table
 from tinydb_serialization import SerializationMiddleware
 from tinydb_serialization.serializers import DateTimeSerializer
 
@@ -6,11 +9,17 @@ from facial_recognition.constants import DATABASE_FILE, DATA_DIR
 from facial_recognition.serializer import UuidSerializer
 
 
-class Database:
-    db: TinyDB
+class Tables(enum.Enum):
+    FACE_DATA = "face_data"
 
-    def __init__(self) -> None:
-        self.db = self._build_database()
+
+class Database:
+    _db_instance: TinyDB
+    table: Table
+
+    def __init__(self, table: Tables) -> None:
+        self._db_instance = self._build_database()
+        self.table = self._db_instance.table(table.value)
 
     def _build_database(self) -> TinyDB:
         if not DATA_DIR.exists():
@@ -23,7 +32,7 @@ class Database:
         return TinyDB(DATABASE_FILE, storage=serializer)
 
     def __enter__(self):
-        return self.db
+        return self.table
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.close()
+        self._db_instance.close()
