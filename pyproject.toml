@@ -13,6 +13,7 @@ pydantic = "^2.5.3"
 tinydb-serialization = "^2.1.1"
 imutils = "^0.5.4"
 humanize = "^4.9.0"
+opencv-python = "^4.9.0.80"
 
 
 [build-system]
