@@ -7,31 +7,45 @@ import imutils
 
 from facial_recognition.constants import DATA_DIR
 from facial_recognition.model.face_data import FaceData
+from facial_recognition.util.constants import MAX_FACES
+from facial_recognition.util.image import frame_to_image
 
 type OnCaptureComplete = Callable[[], None]
+type OnImageCaptured = Callable[[int, str], None]
 
 
 class FaceDatabase:
     _face_path: Path
     _face_data: FaceData
-    on_capture_complete: OnCaptureComplete
+    _video_capture: cv2.VideoCapture
 
-    def __init__(self, face_data: FaceData, on_capture_complete: OnCaptureComplete) -> None:
+    on_capture_complete: OnCaptureComplete
+    on_image_captured: OnImageCaptured
+
+    def __init__(self, face_data: FaceData, on_capture_complete: OnCaptureComplete,
+                 on_image_captured: OnImageCaptured) -> None:
         self._face_data = face_data
         self._face_path = DATA_DIR / str(face_data.data_path)
+
         self.on_capture_complete = on_capture_complete
+        self.on_image_captured = on_image_captured
 
     def _create_directory(self) -> None:
         if not self._face_path.exists():
             self._face_path.mkdir()
 
+    def _on_stop_capture(self) -> None:
+        self._video_capture.release()
+        cv2.destroyAllWindows()
+        self.on_capture_complete()
+
     def capture_face(self) -> None:
         self._create_directory()
-        video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self._video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-        for face_count in range(300):
-            ret, frame = video_capture.read()
+        for face_count in range(MAX_FACES):
+            ret, frame = self._video_capture.read()
             if not ret:
                 break
 
@@ -40,27 +54,53 @@ class FaceDatabase:
 
             faces = face_classifier.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
 
-            for (x, y, w, h) in faces:
-                cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                face = frame[y:y + h, x:x + w]
-                face = cv2.resize(face, (150, 150), interpolation=cv2.INTER_CUBIC)
-                image_path = str(self._face_path / f'face-{face_count}.jpg')
-                cv2.imwrite(image_path, face)
-
-                cv2.imshow('frame', resized_frame)
-                key = cv2.waitKey(1)
-                if key == 27:
-                    video_capture.release()
-                    cv2.destroyAllWindows()
-                    self.on_capture_complete()
-                    break
+            self._show_face_indicator(face_count, faces, frame, resized_frame)
         else:
-            video_capture.release()
-            cv2.destroyAllWindows()
-            self.on_capture_complete()
+            self._on_stop_capture()
+
+    def _show_face_indicator(self, face_count, faces, frame, resized_frame):
+        for (x, y, w, h) in faces:
+            cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            face = frame[y:y + h, x:x + w]
+            face = cv2.resize(face, (150, 150), interpolation=cv2.INTER_CUBIC)
+            self._store_face_image(face, face_count)
+
+            # cv2.imshow('frame', resized_frame)
+            self.on_image_captured(face_count, frame_to_image(resized_frame))
+            key = cv2.waitKey(1)
+            if key == 27:  # ESC key
+                self._on_stop_capture()
+                break
+
+    def _store_face_image(self, face, face_count):
+        image_path = str(self._face_path / f'face-{face_count}.jpg')
+        cv2.imwrite(image_path, face)
 
 
 if __name__ == "__main__":
-    face_data = FaceData(name="test")
-    face_database = FaceDatabase(face_data, lambda: print("Captured face"))
-    face_database.capture_face()
+    def main(page: ft.Page) -> None:
+        def update_image_captured(face_count: int, image: str) -> None:
+            text.value = f"Captured {face_count} faces"
+            image_webcam.src_base64 = image
+            page.update()
+
+        face_data = FaceData(name="test")
+        face_database = FaceDatabase(
+            face_data=face_data,
+            on_capture_complete=lambda: print("Captured face"),
+            on_image_captured=update_image_captured
+        )
+        text = ft.Text("")
+        image_webcam = ft.Image()
+        page.add(
+            ft.Column(
+                controls=[
+                    text,
+                    image_webcam
+                ]
+            )
+        )
+        face_database.capture_face()
+
+
+    ft.app(target=main)

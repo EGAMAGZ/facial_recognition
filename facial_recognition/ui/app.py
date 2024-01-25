@@ -2,6 +2,7 @@ import flet as ft
 
 from facial_recognition.ui.screens.generate_data_screen import GenerateDataScreen
 from facial_recognition.ui.user_controls.app_bar import custom_app_bar
+from facial_recognition.util.constants import APP_TITLE
 
 
 class FaceRecognitionApp(ft.UserControl):
@@ -30,7 +31,7 @@ class FaceRecognitionApp(ft.UserControl):
 
 
 def app(page: ft.Page) -> None:
-    page.title = "Facial Recognition"
+    page.title = APP_TITLE
     page.add(
         ft.Tabs(
             selected_index=0,
