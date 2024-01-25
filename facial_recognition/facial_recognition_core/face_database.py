@@ -1,3 +1,5 @@
+import uuid
+
 import flet as ft
 from pathlib import Path
 from typing import Callable
@@ -42,21 +44,21 @@ class FaceDatabase:
 
     def _add_face_indicators(self, face_count, faces, frame, resized_frame):
         for (x, y, w, h) in faces:
+            if not self._is_capturing:
+                break
             cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             face = frame[y:y + h, x:x + w]
             face = cv2.resize(face, (150, 150), interpolation=cv2.INTER_CUBIC)
-            self._store_face_image(face, face_count)
 
-            # cv2.imshow('frame', resized_frame)
+            self._store_face_image(face)
             self.on_image_captured(face_count, frame_to_image(resized_frame))
+            # cv2.imshow('frame', resized_frame)
             # key = cv2.waitKey(delay=1)
             # if key == 27:  # ESC key
-            if not self._is_capturing:
-                self._on_stop_capture()
-                break
+            # break
 
-    def _store_face_image(self, face, face_count):
-        image_path = str(self._face_path / f'face-{face_count}.jpg')
+    def _store_face_image(self, face):
+        image_path = str(self._face_path / f'face-{uuid.uuid4()}.jpg')
         cv2.imwrite(image_path, face)
 
     def capture_face(self) -> None:
@@ -65,6 +67,10 @@ class FaceDatabase:
         face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
         for face_count in range(MAX_FACES):
+            if not self._is_capturing:
+                self._on_stop_capture()
+                break
+
             ret, frame = self._video_capture.read()
             if not ret:
                 break
@@ -83,6 +89,10 @@ class FaceDatabase:
 
 
 if __name__ == "__main__":
+    if not DATA_DIR.exists():
+        DATA_DIR.mkdir()
+
+
     def main(page: ft.Page) -> None:
         def update_image_captured(face_count: int, image: str) -> None:
             text.value = f"Captured {face_count} faces"
