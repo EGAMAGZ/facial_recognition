@@ -25,6 +25,7 @@ class NameTextField(ft.UserControl):
             self.on_capture_click(face_data)
         except ValidationError:
             self.text_field_ref.current.helper_text = "Name is required"
+            self.text_field_ref.current.update()
 
     def clear_text_field(self) -> None:
         self.text_field_ref.current.value = ""
