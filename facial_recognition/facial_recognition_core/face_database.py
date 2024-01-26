@@ -13,7 +13,8 @@ from facial_recognition.util.constants import MAX_FACES
 from facial_recognition.util.image import frame_to_image
 
 type OnCaptureComplete = Callable[[], None]
-type OnImageCaptured = Callable[[int, str], None]
+type OnImageCaptured = Callable[[int, ImageContent], None]
+type ImageContent = str
 
 
 class FaceDatabase:
@@ -94,7 +95,7 @@ if __name__ == "__main__":
 
 
     def main(page: ft.Page) -> None:
-        def update_image_captured(face_count: int, image: str) -> None:
+        def update_image_captured(face_count: int, image: ImageContent) -> None:
             text.value = f"Captured {face_count} faces"
             image_webcam.src_base64 = image
             page.update()

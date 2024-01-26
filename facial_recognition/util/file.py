@@ -5,7 +5,7 @@ from facial_recognition.constants import DATA_DIR
 
 
 def delete_face_directory(directory: uuid.UUID) -> None:
-    face_path = DATA_DIR / directory
+    face_path = DATA_DIR / str(directory)
     if not face_path.exists():
         return
-    shutil.rmtree(DATA_DIR / directory)
+    shutil.rmtree(face_path)
