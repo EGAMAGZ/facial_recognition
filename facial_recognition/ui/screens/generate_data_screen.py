@@ -2,7 +2,7 @@ import flet as ft
 
 from facial_recognition.database import Database, Tables
 from facial_recognition.model.face_data import FaceData
-from facial_recognition.ui.screens.face_capturer import FaceCapturer
+from facial_recognition.ui.user_controls.face_capturer import FaceCapturer
 from facial_recognition.ui.user_controls.face_data_item import FaceDataItem
 from facial_recognition.ui.user_controls.name_text_field import NameTextField
 from facial_recognition.util.file import delete_face_directory
