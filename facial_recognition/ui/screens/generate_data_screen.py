@@ -28,15 +28,15 @@ class GenerateDataScreen(ft.UserControl):
                 )
             )
 
-    def on_capture_click(self, face_data: FaceData) -> None:
-        def on_dismiss(event: ft.ControlEvent) -> None:
+    def on_capture_click(self, face_data: FaceData, is_recapture: bool = False) -> None:
+        def on_dismiss(_event: ft.ControlEvent) -> None:
             face_capturer.stop_capture()
             self.face_capture_dialog.open = False
             self.page.update()
 
         face_capturer = FaceCapturer(
             face_data=face_data,
-            on_capture_complete=lambda: self.on_capture_complete(face_data),
+            on_capture_complete=lambda: self.on_capture_complete(face_data, is_recapture),
         )
         self.face_capture_dialog = ft.AlertDialog(
             modal=True,
@@ -45,24 +45,26 @@ class GenerateDataScreen(ft.UserControl):
             actions=[
                 ft.TextButton(text="Stop", on_click=on_dismiss),
             ],
+            actions_alignment=ft.MainAxisAlignment.END,
             on_dismiss=lambda _: on_dismiss,
         )
         self.page.dialog = self.face_capture_dialog
         self.face_capture_dialog.open = True
         self.page.update()
 
-    def on_capture_complete(self, face_data: FaceData) -> None:
+    def on_capture_complete(self, face_data: FaceData, is_recapture: bool = False) -> None:
+        if not is_recapture:
+            with Database(Tables.FACE_DATA) as db:
+                # TODO: Check if their is a better implementation
+                doc_id = db.insert(face_data.model_dump())
+                face_data.doc_id = doc_id
+                self.face_data_list.append(
+                    face_data
+                )
+            self.update_face_dada_list()
+
         self.face_capture_dialog.open = False
         self.page.update()
-
-        with Database(Tables.FACE_DATA) as db:
-            # TODO: Check if their is a better implementation
-            doc_id = db.insert(face_data.model_dump())
-            face_data.doc_id = doc_id
-            self.face_data_list.append(
-                face_data
-            )
-        self.update_face_dada_list()
 
     def on_delete_click(self, face_data: FaceData) -> None:
         with Database(Tables.FACE_DATA) as db:
@@ -77,7 +79,8 @@ class GenerateDataScreen(ft.UserControl):
         self.list_view_ref.current.controls = [
             FaceDataItem(
                 face_data=face_data,
-                on_delete_click=self.on_delete_click
+                on_delete_click=self.on_delete_click,
+                on_recapture_click=lambda f: self.on_capture_click(f, True)
             ) for face_data in self.face_data_list
         ]
         self.update()
@@ -98,7 +101,8 @@ class GenerateDataScreen(ft.UserControl):
                         controls=[
                             FaceDataItem(
                                 face_data=face_data,
-                                on_delete_click=self.on_delete_click
+                                on_delete_click=self.on_delete_click,
+                                on_recapture_click=lambda f: self.on_capture_click(f, True)
                             ) for face_data in self.face_data_list
                         ],
                     )
