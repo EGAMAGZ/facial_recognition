@@ -5,7 +5,7 @@ from tinydb.table import Table
 from tinydb_serialization import SerializationMiddleware
 from tinydb_serialization.serializers import DateTimeSerializer
 
-from facial_recognition.constants import DATABASE_FILE, DATA_DIR
+from facial_recognition.util.constants import DATABASE_FILE, DATA_DIR
 from facial_recognition.serializer import UuidSerializer
 
 

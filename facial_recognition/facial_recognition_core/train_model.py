@@ -4,7 +4,7 @@ import flet as ft
 import cv2
 import numpy as np
 
-from facial_recognition.constants import DATA_DIR
+from facial_recognition.util.constants import DATA_DIR
 from facial_recognition.database import Tables, Database
 from facial_recognition.model.face_data import FaceData
 from facial_recognition.util.constants import MODEL_FILE_NAME

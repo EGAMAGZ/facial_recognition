@@ -1,7 +1,7 @@
 import shutil
 import uuid
 
-from facial_recognition.constants import DATA_DIR
+from facial_recognition.util.constants import DATA_DIR
 from facial_recognition.util.constants import MODEL_FILE_NAME
 
 

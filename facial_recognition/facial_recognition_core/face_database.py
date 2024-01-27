@@ -7,7 +7,7 @@ from typing import Callable
 import cv2
 import imutils
 
-from facial_recognition.constants import DATA_DIR
+from facial_recognition.util.constants import DATA_DIR
 from facial_recognition.model.face_data import FaceData
 from facial_recognition.util.constants import MAX_FACES
 from facial_recognition.util.image import frame_to_image
@@ -44,7 +44,7 @@ class FaceDatabase:
         self.on_capture_complete()
 
     def _add_face_indicators(self, face_count, faces, frame, resized_frame):
-        for (x, y, w, h) in faces:
+        for x, y, w, h in faces:
             if not self._is_capturing:
                 break
             cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
