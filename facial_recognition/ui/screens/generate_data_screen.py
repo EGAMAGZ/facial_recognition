@@ -6,7 +6,7 @@ from facial_recognition.ui.user_controls.face_capturer import FaceCapturer
 from facial_recognition.ui.user_controls.face_data_item import FaceDataItem
 from facial_recognition.ui.user_controls.name_text_field import NameTextField
 from facial_recognition.util.document import to_face_data_list
-from facial_recognition.util.file import delete_face_directory
+from facial_recognition.util.file import delete_face_directory, delete_model_file
 
 
 class GenerateDataScreen(ft.UserControl):
@@ -64,9 +64,12 @@ class GenerateDataScreen(ft.UserControl):
 
     def on_delete_click(self, face_data: FaceData) -> None:
         with Database(Tables.FACE_DATA) as db:
-            self.face_data_list.remove(face_data)
-            delete_face_directory(face_data.data_path)
             db.remove(doc_ids=[face_data.doc_id])
+
+        self.face_data_list.remove(face_data)
+        if len(self.face_data_list) == 0:
+            delete_model_file()
+        delete_face_directory(face_data.data_path)
 
         self.update_face_dada_list()
 
