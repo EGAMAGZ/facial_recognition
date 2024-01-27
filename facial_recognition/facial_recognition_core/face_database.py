@@ -40,7 +40,6 @@ class FaceDatabase:
 
     def _on_stop_capture(self) -> None:
         self._video_capture.release()
-        # cv2.destroyAllWindows()
         self.on_capture_complete()
 
     def _add_face_indicators(self, face_count, faces, frame, resized_frame):
@@ -53,10 +52,6 @@ class FaceDatabase:
 
             self._store_face_image(face)
             self.on_image_captured(face_count, frame_to_image(resized_frame))
-            # cv2.imshow('frame', resized_frame)
-            # key = cv2.waitKey(delay=1)
-            # if key == 27:  # ESC key
-            # break
 
     def _store_face_image(self, face):
         image_path = str(self._face_path / f'face-{uuid.uuid4()}.jpg')

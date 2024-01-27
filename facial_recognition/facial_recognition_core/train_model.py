@@ -29,17 +29,17 @@ class TrainModel:
 
     def start_training(self) -> None:
         faces_data = []
-        labels: list[int] = []
+        doc_ids: list[int] = []
 
-        for index, face_data in enumerate(self._face_data_list):
+        for index, face_data in enumerate(self._face_data_list, start=1):
             self.on_step_change(f"Reading face data: {index}/{len(self._face_data_list)}")
             face_path = DATA_DIR / str(face_data.data_path)
 
             for image_path in face_path.iterdir():
-                labels.append(index)
+                doc_ids.append(face_data.doc_id)
                 faces_data.append(cv2.imread(str(image_path), 0))
 
-        self._face_recognize(faces_data, labels)
+        self._face_recognize(faces_data, doc_ids)
         self._on_training_complete()
 
     def _face_recognize(self, faces_data, labels):
