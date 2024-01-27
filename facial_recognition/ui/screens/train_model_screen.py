@@ -1,27 +1,65 @@
 import flet as ft
 
 from facial_recognition.database import Database, Tables
+from facial_recognition.facial_recognition_core.train_model import TrainModel
 from facial_recognition.model.face_data import FaceData
 from facial_recognition.util.document import to_face_data_list
 
 
 class TrainModelScreen(ft.UserControl):
-    face_data_list: list[FaceData] = []
+    status_card_ref = ft.Ref[ft.Card]()
+    status_text_ref = ft.Ref[ft.Text]()
 
     def __init__(self) -> None:
         super().__init__()
 
-    def load_face_data(self) -> None:
+    def load_face_data(self) -> list[FaceData]:
         with Database(Tables.FACE_DATA) as db:
-            self.face_data_list = to_face_data_list(db.all())
+            return to_face_data_list(db.all())
 
     def on_train_model(self) -> None:
-        self.load_face_data()
-        print(len(self.face_data_list))
-        if len(self.face_data_list) == 0:
+        face_data_list = self.load_face_data()
+
+        if len(face_data_list) == 0:
             self.show_no_face_data_dialog()
         else:
-            print("train model")
+            train_model = TrainModel(
+                face_data_list=face_data_list,
+                on_training_complete=self.on_training_complete,
+                on_step_change=self.on_step_change,
+            )
+            self.status_text_ref.current.value = "Initializing training..."
+            self.status_card_ref.current.visible = True
+            self.status_card_ref.current.update()
+
+            train_model.start_training()
+
+    def on_training_complete(self) -> None:
+        def close_dialog(_event: ft.ControlEvent) -> None:
+            dialog.open = False
+            self.status_card_ref.current.visible = False
+            self.status_card_ref.current.update()
+            self.page.update()
+
+        dialog = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Model Trained"),
+            content=ft.Text("Model trained successfully"),
+            actions=[
+                ft.TextButton(
+                    text="Ok",
+                    on_click=close_dialog
+                )
+            ],
+            on_dismiss=close_dialog,
+        )
+        self.page.dialog = dialog
+        dialog.open = True
+        self.page.update()
+
+    def on_step_change(self, step: str) -> None:
+        self.status_text_ref.current.value = step
+        self.status_card_ref.current.update()
 
     def show_no_face_data_dialog(self) -> None:
         def close_dialog(_event: ft.ControlEvent) -> None:
@@ -44,7 +82,37 @@ class TrainModelScreen(ft.UserControl):
             padding=ft.padding.only(top=20),
             content=ft.Column(
                 controls=[
-                    ft.TextButton("Train model", on_click=lambda _: self.on_train_model()),
+                    ft.Row(
+                        controls=[
+                            ft.Card(
+                                content=ft.Container(
+                                    ref=self.status_card_ref,
+                                    content=ft.Row(
+                                        controls=[
+                                            ft.ProgressRing(),
+                                            ft.Text(
+                                                ref=self.status_text_ref,
+                                            )
+                                        ]
+                                    ),
+                                    padding=ft.padding.all(10),
+                                ),
+                                expand=True,
+                                ref=self.status_card_ref,
+                                visible=False,
+                            )
+                        ],
+                    ),
+                    ft.Row(
+                        controls=[
+                            ft.FilledButton(
+                                text="Train model",
+                                on_click=lambda _: self.on_train_model(),
+                                expand=True,
+                            ),
+                        ]
+                    )
+
                 ]
             )
         )
