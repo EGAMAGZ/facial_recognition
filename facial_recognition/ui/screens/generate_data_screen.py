@@ -5,6 +5,7 @@ from facial_recognition.model.face_data import FaceData
 from facial_recognition.ui.user_controls.face_capturer import FaceCapturer
 from facial_recognition.ui.user_controls.face_data_item import FaceDataItem
 from facial_recognition.ui.user_controls.name_text_field import NameTextField
+from facial_recognition.util.document import to_face_data_list
 from facial_recognition.util.file import delete_face_directory
 
 
@@ -21,12 +22,7 @@ class GenerateDataScreen(ft.UserControl):
 
     def load_face_data(self) -> None:
         with Database(Tables.FACE_DATA) as db:
-            # TODO: Improve code quality
-            self.face_data_list = list(
-                map(
-                    lambda row: FaceData(doc_id=row.doc_id, **row), db.all()
-                )
-            )
+            self.face_data_list = to_face_data_list(db.all())
 
     def on_capture_click(self, face_data: FaceData, is_recapture: bool = False) -> None:
         def on_dismiss(_event: ft.ControlEvent) -> None:
