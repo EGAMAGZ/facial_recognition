@@ -25,7 +25,7 @@ class GenerateDataScreen(ft.UserControl):
             self.face_data_list = to_face_data_list(db.all())
 
     def on_capture_click(self, face_data: FaceData, is_recapture: bool = False) -> None:
-        def on_dismiss(_event: ft.ControlEvent) -> None:
+        def close_dialog(_event: ft.ControlEvent) -> None:
             face_capturer.stop_capture()
             self.face_capture_dialog.open = False
             self.page.update()
@@ -39,10 +39,9 @@ class GenerateDataScreen(ft.UserControl):
             title=ft.Text("Capturing face..."),
             content=face_capturer,
             actions=[
-                ft.TextButton(text="Stop", on_click=on_dismiss),
+                ft.TextButton(text="Stop", on_click=close_dialog),
             ],
             actions_alignment=ft.MainAxisAlignment.END,
-            on_dismiss=lambda _: on_dismiss,
         )
         self.page.dialog = self.face_capture_dialog
         self.face_capture_dialog.open = True
@@ -51,7 +50,6 @@ class GenerateDataScreen(ft.UserControl):
     def on_capture_complete(self, face_data: FaceData, is_recapture: bool = False) -> None:
         if not is_recapture:
             with Database(Tables.FACE_DATA) as db:
-                # TODO: Check if their is a better implementation
                 doc_id = db.insert(face_data.model_dump())
                 face_data.doc_id = doc_id
                 self.face_data_list.append(

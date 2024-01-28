@@ -10,21 +10,23 @@ class TrainModelScreen(ft.UserControl):
     status_card_ref = ft.Ref[ft.Card]()
     status_text_ref = ft.Ref[ft.Text]()
 
+    _face_data_list: list[FaceData] = []
+
     def __init__(self) -> None:
         super().__init__()
 
-    def load_face_data(self) -> list[FaceData]:
+    def _load_face_data(self) -> None:
         with Database(Tables.FACE_DATA) as db:
-            return to_face_data_list(db.all())
+            self._face_data_list = to_face_data_list(db.all())
 
     def on_train_model(self) -> None:
-        face_data_list = self.load_face_data()
+        self._load_face_data()
 
-        if len(face_data_list) == 0:
-            self.show_no_face_data_dialog()
+        if len(self._face_data_list) == 0:
+            self._show_no_face_data_dialog()
         else:
             train_model = TrainModel(
-                face_data_list=face_data_list,
+                face_data_list=self._face_data_list,
                 on_training_complete=self.on_training_complete,
                 on_step_change=self.on_step_change,
             )
@@ -51,7 +53,7 @@ class TrainModelScreen(ft.UserControl):
                     on_click=close_dialog
                 )
             ],
-            on_dismiss=close_dialog,
+            actions_alignment=ft.MainAxisAlignment.END,
         )
         self.page.dialog = dialog
         dialog.open = True
@@ -61,7 +63,7 @@ class TrainModelScreen(ft.UserControl):
         self.status_text_ref.current.value = step
         self.status_card_ref.current.update()
 
-    def show_no_face_data_dialog(self) -> None:
+    def _show_no_face_data_dialog(self) -> None:
         def close_dialog(_event: ft.ControlEvent) -> None:
             dialog.open = False
             self.page.update()
@@ -84,6 +86,15 @@ class TrainModelScreen(ft.UserControl):
                 controls=[
                     ft.Row(
                         controls=[
+                            ft.FilledButton(
+                                text="Train model",
+                                on_click=lambda _: self.on_train_model(),
+                                expand=True,
+                            ),
+                        ]
+                    ),
+                    ft.Row(
+                        controls=[
                             ft.Card(
                                 content=ft.Container(
                                     ref=self.status_card_ref,
@@ -103,16 +114,6 @@ class TrainModelScreen(ft.UserControl):
                             )
                         ],
                     ),
-                    ft.Row(
-                        controls=[
-                            ft.FilledButton(
-                                text="Train model",
-                                on_click=lambda _: self.on_train_model(),
-                                expand=True,
-                            ),
-                        ]
-                    )
-
                 ]
             )
         )

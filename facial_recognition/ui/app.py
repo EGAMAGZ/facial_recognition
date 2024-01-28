@@ -1,5 +1,6 @@
 import flet as ft
 
+from facial_recognition.ui.screens.facial_recognition_screen import FacialRecognitionScreen
 from facial_recognition.ui.screens.generate_data_screen import GenerateDataScreen
 from facial_recognition.ui.screens.train_model_screen import TrainModelScreen
 from facial_recognition.ui.user_controls.app_bar import custom_app_bar
@@ -51,7 +52,7 @@ def app(page: ft.Page) -> None:
                 ft.Tab(
                     text="Recognize faces",
                     icon=ft.icons.FIND_IN_PAGE,
-                    content=ft.Text("Recognize faces"),
+                    content=FacialRecognitionScreen()
                 )
             ],
             expand=True,

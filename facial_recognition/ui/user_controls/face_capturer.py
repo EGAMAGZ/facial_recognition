@@ -52,6 +52,5 @@ class FaceCapturer(ft.UserControl):
                     ),
                     bgcolor=ft.colors.BLACK,
                 )
-
             ]
         )

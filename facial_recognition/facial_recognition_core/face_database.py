@@ -22,7 +22,7 @@ class FaceDatabase:
     _face_data: FaceData
     _video_capture: cv2.VideoCapture
 
-    _is_capturing = True
+    _is_capturing: bool = True
     on_capture_complete: OnCaptureComplete
     on_image_captured: OnImageCaptured
 
