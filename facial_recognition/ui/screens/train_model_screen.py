@@ -7,10 +7,11 @@ from facial_recognition.util.document import to_face_data_list
 
 
 class TrainModelScreen(ft.UserControl):
-    status_card_ref = ft.Ref[ft.Card]()
-    status_text_ref = ft.Ref[ft.Text]()
+    _status_card_ref = ft.Ref[ft.Card]()
+    _status_text_ref = ft.Ref[ft.Text]()
 
     _face_data_list: list[FaceData] = []
+    _train_button_ref = ft.Ref[ft.FilledButton]()
 
     def __init__(self) -> None:
         super().__init__()
@@ -20,27 +21,36 @@ class TrainModelScreen(ft.UserControl):
             self._face_data_list = to_face_data_list(db.all())
 
     def on_train_model(self) -> None:
+
         self._load_face_data()
 
         if len(self._face_data_list) == 0:
             self._show_no_face_data_dialog()
         else:
+            self._train_button_ref.current.disabled = True
+            self._train_button_ref.current.update()
+
             train_model = TrainModel(
                 face_data_list=self._face_data_list,
                 on_training_complete=self.on_training_complete,
                 on_step_change=self.on_step_change,
             )
-            self.status_text_ref.current.value = "Initializing training..."
-            self.status_card_ref.current.visible = True
-            self.status_card_ref.current.update()
+
+            self._status_text_ref.current.value = "Initializing training..."
+            self._status_card_ref.current.visible = True
+            self._status_card_ref.current.update()
 
             train_model.start_training()
 
     def on_training_complete(self) -> None:
         def close_dialog(_event: ft.ControlEvent) -> None:
+            self._train_button_ref.current.disabled = False
+            self._train_button_ref.current.update()
+
+            self._status_card_ref.current.visible = False
+            self._status_card_ref.current.update()
+
             dialog.open = False
-            self.status_card_ref.current.visible = False
-            self.status_card_ref.current.update()
             self.page.update()
 
         dialog = ft.AlertDialog(
@@ -60,11 +70,14 @@ class TrainModelScreen(ft.UserControl):
         self.page.update()
 
     def on_step_change(self, step: str) -> None:
-        self.status_text_ref.current.value = step
-        self.status_card_ref.current.update()
+        self._status_text_ref.current.value = step
+        self._status_card_ref.current.update()
 
     def _show_no_face_data_dialog(self) -> None:
         def close_dialog(_event: ft.ControlEvent) -> None:
+            self._train_button_ref.current.disabled = False
+            self._train_button_ref.current.update()
+
             dialog.open = False
             self.page.update()
 
@@ -90,6 +103,7 @@ class TrainModelScreen(ft.UserControl):
                                 text="Train model",
                                 on_click=lambda _: self.on_train_model(),
                                 expand=True,
+                                ref=self._train_button_ref,
                             ),
                         ]
                     ),
@@ -97,19 +111,19 @@ class TrainModelScreen(ft.UserControl):
                         controls=[
                             ft.Card(
                                 content=ft.Container(
-                                    ref=self.status_card_ref,
+                                    ref=self._status_card_ref,
                                     content=ft.Row(
                                         controls=[
                                             ft.ProgressRing(),
                                             ft.Text(
-                                                ref=self.status_text_ref,
+                                                ref=self._status_text_ref,
                                             )
                                         ]
                                     ),
                                     padding=ft.padding.all(10),
                                 ),
                                 expand=True,
-                                ref=self.status_card_ref,
+                                ref=self._status_card_ref,
                                 visible=False,
                             )
                         ],
