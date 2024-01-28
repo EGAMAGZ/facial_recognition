@@ -46,12 +46,6 @@ class FacialRecognition:
 
             self._add_face_indicators(aux_frame, face_recognizer, faces, frame)
 
-            # TODO: Remove this
-            #cv2.imshow('frame', frame)
-            #key = cv2.waitKey(delay=1)
-            #if key == 27:  # ESC key
-                #break
-
     def _add_face_indicators(self, aux_frame, face_recognizer, faces, frame):
         for x, y, w, h in faces:
             if not self._is_recognizing:
