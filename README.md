@@ -2,6 +2,10 @@
 
 A simple program to demonstrate the use of the Flet framework with OpenCV to perform facial recognition in camera.
 
+## Example
+
+
+
 ## Usage
 
 To run the app, install the dependencies with
