@@ -15,7 +15,7 @@ To run the app, install the dependencies with
 poetry install
 ```
 
-and run the app with ^
+and run the app with
 
 ```shell
 python main.py
