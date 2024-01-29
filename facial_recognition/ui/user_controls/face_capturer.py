@@ -1,6 +1,10 @@
 import flet as ft
 
-from facial_recognition.facial_recognition_core.face_database import FaceDatabase, ImageContent, OnCaptureComplete
+from facial_recognition.facial_recognition_core.face_database import (
+    FaceDatabase,
+    ImageContent,
+    OnCaptureComplete,
+)
 from facial_recognition.model.face_data import FaceData
 from facial_recognition.util.constants import MAX_FACES
 

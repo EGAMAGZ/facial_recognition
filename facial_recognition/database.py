@@ -1,12 +1,12 @@
 import enum
 
-from tinydb import TinyDB, JSONStorage
+from tinydb import JSONStorage, TinyDB
 from tinydb.table import Table
 from tinydb_serialization import SerializationMiddleware
 from tinydb_serialization.serializers import DateTimeSerializer
 
-from facial_recognition.util.constants import DATABASE_FILE, DATA_DIR
 from facial_recognition.serializer import UuidSerializer
+from facial_recognition.util.constants import DATA_DIR, DATABASE_FILE
 
 
 class Tables(enum.Enum):

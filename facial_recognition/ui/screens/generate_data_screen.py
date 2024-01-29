@@ -6,7 +6,10 @@ from facial_recognition.ui.user_controls.face_capturer import FaceCapturer
 from facial_recognition.ui.user_controls.face_data_item import FaceDataItem
 from facial_recognition.ui.user_controls.name_text_field import NameTextField
 from facial_recognition.util.document import to_face_data_list
-from facial_recognition.util.file import delete_face_directory, delete_model_file
+from facial_recognition.util.file import (
+    delete_face_directory,
+    delete_model_file,
+)
 
 
 class GenerateDataScreen(ft.UserControl):

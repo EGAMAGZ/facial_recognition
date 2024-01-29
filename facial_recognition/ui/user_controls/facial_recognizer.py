@@ -1,6 +1,9 @@
 import flet as ft
 
-from facial_recognition.facial_recognition_core.facial_recognition import FacialRecognition, ImageContent
+from facial_recognition.facial_recognition_core.facial_recognition import (
+    FacialRecognition,
+    ImageContent,
+)
 
 
 class FacialRecognizer(ft.UserControl):

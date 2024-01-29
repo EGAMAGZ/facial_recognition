@@ -1,8 +1,7 @@
 import shutil
 import uuid
 
-from facial_recognition.util.constants import DATA_DIR
-from facial_recognition.util.constants import MODEL_FILE_NAME
+from facial_recognition.util.constants import DATA_DIR, MODEL_FILE_NAME
 
 
 def delete_face_directory(directory: uuid.UUID) -> None:

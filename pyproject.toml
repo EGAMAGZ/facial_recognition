@@ -16,6 +16,36 @@ humanize = "^4.9.0"
 opencv-contrib-python = "^4.9.0.80"
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.14"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".gitignore",
+    ".idea",
+    "__pycache__",
+]
+
+[tool.ruff.lint]
+select = [
+    "F",
+    "E",
+    "W",
+    "I",
+    "N",
+    "UP"
+]
+ignore=[
+    "E501"
+]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+line-ending = "auto"

@@ -1,6 +1,8 @@
 import flet as ft
 
-from facial_recognition.ui.user_controls.facial_recognizer import FacialRecognizer
+from facial_recognition.ui.user_controls.facial_recognizer import (
+    FacialRecognizer,
+)
 from facial_recognition.util.constants import DATA_DIR, MODEL_FILE_NAME
 
 

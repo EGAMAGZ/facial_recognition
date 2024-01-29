@@ -1,13 +1,12 @@
 from typing import Callable
 
-import flet as ft
 import cv2
+import flet as ft
 import numpy as np
 
-from facial_recognition.util.constants import DATA_DIR
-from facial_recognition.database import Tables, Database
+from facial_recognition.database import Database, Tables
 from facial_recognition.model.face_data import FaceData
-from facial_recognition.util.constants import MODEL_FILE_NAME
+from facial_recognition.util.constants import DATA_DIR, MODEL_FILE_NAME
 from facial_recognition.util.document import to_face_data_list
 
 type OnTrainingModelComplete = Callable[[], None]

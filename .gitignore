@@ -161,3 +161,4 @@ cython_debug/
 
 # Directory with facial recognition data
 data/
+.ruff_cache/

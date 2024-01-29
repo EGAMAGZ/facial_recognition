@@ -3,7 +3,11 @@ from typing import Callable
 import cv2
 
 from facial_recognition.database import Database, Tables
-from facial_recognition.util.constants import DATA_DIR, MODEL_FILE_NAME, DEFAULT_THRESHOLD
+from facial_recognition.util.constants import (
+    DATA_DIR,
+    DEFAULT_THRESHOLD,
+    MODEL_FILE_NAME,
+)
 from facial_recognition.util.document import to_face_data
 from facial_recognition.util.image import frame_to_image
 
