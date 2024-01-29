@@ -4,6 +4,7 @@ A simple program to demonstrate the use of the Flet framework with OpenCV to per
 
 ## Example
 
+https://github.com/EGAMAGZ/facial_recognition/assets/46827955/eefbc7b8-4043-4c11-829a-00e0421baba0
 
 
 ## Usage
