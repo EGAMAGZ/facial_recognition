@@ -19,7 +19,7 @@ https://github.com/EGAMAGZ/facial_recognition/assets/46827955/eefbc7b8-4043-4c11
 To run the app, install the dependencies with
 
 ``` shell
-poetry install
+poetry install --no-root
 ```
 
 and run the app with
